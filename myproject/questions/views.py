@@ -14,6 +14,8 @@ def signal_sync_view(request):
     TestModel.objects.create(name="test")
     end = time.time()
     return JsonResponse({
+        "question": "Are Django signals executed synchronously or asynchronously?",
+        "answer": "Django signals are executed synchronously by default.",
         "message": "Signal triggered",
         "time_taken_seconds": round(end - start, 2)
     })
@@ -23,6 +25,8 @@ def signal_thread_view(request):
     main_thread = threading.get_ident()
     TestModel.objects.create(name="thread_test")
     return JsonResponse({
+        "question": "Do Django signals run in the same thread as the caller?",
+        "answer": "Yes, by default Django signals run in the same thread.",
         "main_thread_id": main_thread,
         "note": "Signal handler prints thread ID"
     })
@@ -35,10 +39,16 @@ def signal_transaction_view(request):
     except Exception as e:
         rolled_back = not TestModel.objects.filter(name="raise").exists()
         return JsonResponse({
+             "question": "Do Django signals run in the same database transaction as the caller?",
+            "answer": "Yes, by default Django signals run in the same DB transaction as the caller.",
             "exception": str(e),
             "rolled_back": rolled_back
         })
-    return JsonResponse({"status": "should not reach here"})
+    return JsonResponse({
+        "question": "Do Django signals run in the same database transaction as the caller?",
+        "answer": "Yes, by default Django signals run in the same DB transaction as the caller.",
+        "status": "should not reach here"
+        })
 
 # 4. Custom iterable class
 class Rectangle:
@@ -53,4 +63,8 @@ class Rectangle:
 def rectangle_view(request):
     rect = Rectangle(10, 5)
     data = [i for i in rect]
-    return JsonResponse({"rectangle": data})
+    return JsonResponse({
+        "question": "How can we make a custom class iterable in Python?",
+        "answer": "By defining the __iter__() method and yielding desired values. Here, length and width are yielded one after the other.",
+        "rectangle": data
+        })
